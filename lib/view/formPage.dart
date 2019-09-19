@@ -12,7 +12,28 @@ class _FormPageState extends State<FormPage> {
       appBar: AppBar(
         title: Text('Tambah Catatan'),
       ),
-      body: Container(),
+      body: Form(
+        child: Column(children: <Widget>[
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Nama'
+            ),
+            
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Deskripsi'
+            ),
+            
+          ),
+          TextFormField(
+            decoration: InputDecoration(
+              labelText: 'Harga'
+            ),
+            
+          )
+        ]),
+      ),
       
     );
   }
