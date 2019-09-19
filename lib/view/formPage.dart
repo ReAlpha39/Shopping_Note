@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class FormPage extends StatefulWidget {
   @override
@@ -6,6 +8,8 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+  final dateFormat = DateFormat('dd-MM-yyyy');
+  DateTime date;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -14,6 +18,19 @@ class _FormPageState extends State<FormPage> {
       ),
       body: Form(
         child: Column(children: <Widget>[
+          DateTimeField(
+            readOnly: true,
+            format: dateFormat,
+            initialValue: DateTime.now(),
+            onShowPicker: (context, currentValue) {
+              return showDatePicker(
+                context: context,
+                firstDate: DateTime(1900),
+                initialDate: currentValue ?? DateTime.now(),
+                lastDate: DateTime(2100)
+              );
+            },
+          ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Nama'
