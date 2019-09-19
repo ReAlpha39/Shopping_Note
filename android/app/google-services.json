@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "271288125221",
+    "firebase_url": "https://alkatale-f7200.firebaseio.com",
+    "project_id": "alkatale-f7200",
+    "storage_bucket": "alkatale-f7200.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:271288125221:android:97df6abf7399213d37fccc",
+        "android_client_info": {
+          "package_name": "it.ua8022.shoping_note"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "271288125221-oup3c1e0i2hldch1gqfesd67760a51s4.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAxjwyb9vCQTbRWPabbC276w9ZP3yLsNsM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "271288125221-oup3c1e0i2hldch1gqfesd67760a51s4.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
