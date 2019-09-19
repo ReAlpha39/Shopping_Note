@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shoping_note/view/formPage.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -16,9 +17,14 @@ class _HomeState extends State<Home> {
       body: Container(),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.shopping_cart),
-        onPressed: () {},
+        onPressed: () {
+          navigateToFormPage();
+        },
       ),
       
     );
+  }
+  void navigateToFormPage(){
+    Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage()));
   }
 }
