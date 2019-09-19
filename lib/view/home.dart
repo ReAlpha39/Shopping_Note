@@ -14,6 +14,10 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.green,
       ),
       body: Container(),
+      floatingActionButton: FloatingActionButton(
+        child: Icon(Icons.shopping_cart),
+        onPressed: () {},
+      ),
       
     );
   }
