@@ -53,6 +53,15 @@ class _FormPageState extends State<FormPage> {
             decoration: InputDecoration(
               labelText: 'Harga'
             ),
+            validator: (i) {
+              if (i == null) {
+                return 'harga harus diisi';
+              } if (i == '') {
+                return 'Harga harus berupa angka';
+              } else {
+                return null;
+              }
+            },
             
           ),
           Row(children: <Widget>[
