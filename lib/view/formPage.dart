@@ -48,7 +48,17 @@ class _FormPageState extends State<FormPage> {
               labelText: 'Harga'
             ),
             
-          )
+          ),
+          Row(children: <Widget>[
+            RaisedButton(
+              child: Text('Cancel'),
+              onPressed: () {},
+            ),
+            RaisedButton(
+              child: Text('Save'),
+              onPressed: () {},
+            )
+          ],)
         ]),
       ),
       
