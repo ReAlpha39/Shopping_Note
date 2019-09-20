@@ -8,6 +8,9 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+  TextEditingController namaC = TextEditingController();
+  TextEditingController deskC = TextEditingController();
+  TextEditingController hargaC = TextEditingController();
   final dateFormat = DateFormat('dd-MM-yyyy');
   DateTime date;
   @override
@@ -32,18 +35,21 @@ class _FormPageState extends State<FormPage> {
             },
           ),
           TextFormField(
+            controller: namaC,
             decoration: InputDecoration(
               labelText: 'Nama'
             ),
             
           ),
           TextFormField(
+            controller: deskC,
             decoration: InputDecoration(
               labelText: 'Deskripsi'
             ),
             
           ),
           TextFormField(
+            controller: hargaC,
             decoration: InputDecoration(
               labelText: 'Harga'
             ),
