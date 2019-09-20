@@ -102,15 +102,27 @@ class _FormPageState extends State<FormPage> {
         .collection(doc)
         .document(nama)
         .setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
-    DocumentSnapshot data = await Firestore.instance.collection('daftarBelanja')
-    .document(doc).get();
-    if (data.exists){
-      int value = data.data['jumlahDoc'];
+    var dataS = await Firestore.instance.collection('daftarBelanja')
+        .document(doc)
+        .collection(doc)
+        .getDocuments();
+    var nilai = dataS.documents.length;
+    int totalBelanja;
+    var pengeluaran = await Firestore.instance.collection('daftarBelanja')
+        .document(doc)
+        .collection(doc)
+        .document(nama).get();
+    totalBelanja = pengeluaran.data['Harga'];
+    var dataAwal = await Firestore.instance.collection('daftarBelanja')
+        .document(doc).get();
+    int valueAwal = dataAwal.data['Total Pengeluaran'];
+    if(valueAwal != null){
       await Firestore.instance.collection('daftarBelanja')
-      .document(doc).updateData({'jumlahDoc': value + 1});
+        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal + totalBelanja});
     }else{
       await Firestore.instance.collection('daftarBelanja')
-    .document(doc).setData({'jumlahDoc': 1});
+        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': totalBelanja});
     }
+    
   }
 }
