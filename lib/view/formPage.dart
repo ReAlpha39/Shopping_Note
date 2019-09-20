@@ -9,6 +9,9 @@ class FormPage extends StatefulWidget {
 
 class _FormPageState extends State<FormPage> {
   GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController namaC = TextEditingController();
+  TextEditingController deskC = TextEditingController();
+  TextEditingController hargaC = TextEditingController();
   final dateFormat = DateFormat('dd-MM-yyyy');
   DateTime date;
   String _tanggal;
@@ -39,23 +42,45 @@ class _FormPageState extends State<FormPage> {
             onSaved: (value) {_tanggal = dateFormat.format(value);},
           ),
           TextFormField(
+            controller: namaC,
             decoration: InputDecoration(
               labelText: 'Nama'
             ),
             onSaved: (value) {_nama = value;},
           ),
           TextFormField(
+            controller: deskC,
             decoration: InputDecoration(
               labelText: 'Deskripsi'
             ),
             onSaved: (value) {_deskripsi = value;},
           ),
           TextFormField(
+            controller: hargaC,
             decoration: InputDecoration(
               labelText: 'Harga'
             ),
             onSaved: (value) {_harga = int.parse(value);},
+            validator: (i) {
+              if (i == null) {
+                return 'harga harus diisi';
+              } if (i == '') {
+                return 'Harga harus berupa angka';
+              } else {
+                return null;
+              }
+            },
           ),
+          Row(children: <Widget>[
+            RaisedButton(
+              child: Text('Cancel'),
+              onPressed: () {},
+            ),
+            RaisedButton(
+              child: Text('Save'),
+              onPressed: () {},
+            )
+          ],)
         ]),
       ),
       
