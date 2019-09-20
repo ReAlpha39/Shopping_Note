@@ -8,8 +8,13 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final dateFormat = DateFormat('dd-MM-yyyy');
   DateTime date;
+  String _tanggal;
+  String _nama;
+  String _deskripsi;
+  int _harga;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +22,7 @@ class _FormPageState extends State<FormPage> {
         title: Text('Tambah Catatan'),
       ),
       body: Form(
+        key: _formKey,
         child: Column(children: <Widget>[
           DateTimeField(
             readOnly: true,
@@ -30,25 +36,26 @@ class _FormPageState extends State<FormPage> {
                 lastDate: DateTime(2100)
               );
             },
+            onSaved: (value) {_tanggal = dateFormat.format(value);},
           ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Nama'
             ),
-            
+            onSaved: (value) {_nama = value;},
           ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Deskripsi'
             ),
-            
+            onSaved: (value) {_deskripsi = value;},
           ),
           TextFormField(
             decoration: InputDecoration(
               labelText: 'Harga'
             ),
-            
-          )
+            onSaved: (value) {_harga = int.parse(value);},
+          ),
         ]),
       ),
       
