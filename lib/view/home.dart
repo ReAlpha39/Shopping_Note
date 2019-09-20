@@ -15,7 +15,7 @@ class _HomeState extends State<Home> {
         title: Text('Rekap Belanja'),
         backgroundColor: Colors.green,
       ),
-      body: Container(),
+      body: _bodyHome(context),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.shopping_cart),
         onPressed: () {
@@ -27,6 +27,47 @@ class _HomeState extends State<Home> {
   }
   void navigateToFormPage(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage()));
+  }
+
+  Widget _bodyHome(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('daftarBelanja').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return LinearProgressIndicator();
+        return _buildList(context, snapshot.data.documents);
+      },
+    );
+  }
+
+  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    return ListView(
+      padding: const EdgeInsets.only(top: 20),
+      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
+    final record = Record.fromSnapshot(data);
+    return Padding(
+      key: ValueKey(record.reference.documentID),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ListTile(
+        leading: Icon(Icons.monetization_on, size: 30,),
+        title: Text(record.reference.documentID),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 20),),
+            Text('Jumlah pengeluaran: ' + '', style: TextStyle(fontSize: 20),)
+          ],
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.navigate_next),
+          onPressed: () {},
+        ),
+      ),
+      
+    );
   }
 }
 
