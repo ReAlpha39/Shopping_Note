@@ -58,7 +58,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 20),),
-            Text('Jumlah pengeluaran: ' + '', style: TextStyle(fontSize: 20),)
+            Text('Jumlah pengeluaran: ' + record.pengeluaran.toString(), style: TextStyle(fontSize: 20),)
           ],
         ),
         trailing: IconButton(
@@ -73,15 +73,18 @@ class _HomeState extends State<Home> {
 
 class Record {
   final int jumlahDoc;
+  final int pengeluaran;
   final DocumentReference reference;
 
   Record.fromMap(Map<String, dynamic> map, {this.reference})
-      :  assert(map['jumlahDoc'] != null),
-        jumlahDoc = map['jumlahDoc'];
+      : assert(map['jumlahDoc'] != null),
+        assert(map['Total Pengeluaran'] != null),
+        jumlahDoc = map['jumlahDoc'],
+        pengeluaran = map['Total Pengeluaran'];
 
   Record.fromSnapshot(DocumentSnapshot snapshot)
       : this.fromMap(snapshot.data, reference: snapshot.reference);
 
   @override
-  String toString() => "Record<$jumlahDoc>";
+  String toString() => "Record<$jumlahDoc:$pengeluaran>";
 }
