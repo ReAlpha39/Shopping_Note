@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -74,16 +75,32 @@ class _FormPageState extends State<FormPage> {
           Row(children: <Widget>[
             RaisedButton(
               child: Text('Cancel'),
-              onPressed: () {},
+              onPressed: () {
+                Navigator.pop(context);
+              },
             ),
             RaisedButton(
               child: Text('Save'),
-              onPressed: () {},
+              onPressed: () {
+                var form = _formKey.currentState;
+                if (form.validate()) {
+                  form.save();
+                  updateDoc(_tanggal, _nama, _deskripsi, _harga);
+                  Navigator.pop(context);
+                }
+              },
             )
           ],)
         ]),
       ),
       
     );
+  }
+  void updateDoc(String doc, String nama, String desk, int harga) async {
+    await Firestore.instance.collection('daftarBelanja')
+        .document(doc)
+        .collection(doc)
+        .document(nama)
+        .setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
   }
 }
