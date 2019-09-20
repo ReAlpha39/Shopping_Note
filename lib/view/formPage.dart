@@ -102,5 +102,15 @@ class _FormPageState extends State<FormPage> {
         .collection(doc)
         .document(nama)
         .setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+    DocumentSnapshot data = await Firestore.instance.collection('daftarBelanja')
+    .document(doc).get();
+    if (data.exists){
+      int value = data.data['jumlahDoc'];
+      await Firestore.instance.collection('daftarBelanja')
+      .document(doc).updateData({'jumlahDoc': value + 1});
+    }else{
+      await Firestore.instance.collection('daftarBelanja')
+    .document(doc).setData({'jumlahDoc': 1});
+    }
   }
 }
