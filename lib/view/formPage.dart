@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
@@ -8,8 +9,16 @@ class FormPage extends StatefulWidget {
 }
 
 class _FormPageState extends State<FormPage> {
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  TextEditingController namaC = TextEditingController();
+  TextEditingController deskC = TextEditingController();
+  TextEditingController hargaC = TextEditingController();
   final dateFormat = DateFormat('dd-MM-yyyy');
   DateTime date;
+  String _tanggal;
+  String _nama;
+  String _deskripsi;
+  int _harga;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,6 +26,7 @@ class _FormPageState extends State<FormPage> {
         title: Text('Tambah Catatan'),
       ),
       body: Form(
+        key: _formKey,
         child: Column(children: <Widget>[
           DateTimeField(
             readOnly: true,
@@ -30,28 +40,67 @@ class _FormPageState extends State<FormPage> {
                 lastDate: DateTime(2100)
               );
             },
+            onSaved: (value) {_tanggal = dateFormat.format(value);},
           ),
           TextFormField(
+            controller: namaC,
             decoration: InputDecoration(
               labelText: 'Nama'
             ),
-            
+            onSaved: (value) {_nama = value;},
           ),
           TextFormField(
+            controller: deskC,
             decoration: InputDecoration(
               labelText: 'Deskripsi'
             ),
-            
+            onSaved: (value) {_deskripsi = value;},
           ),
           TextFormField(
+            controller: hargaC,
             decoration: InputDecoration(
               labelText: 'Harga'
             ),
-            
-          )
+            onSaved: (value) {_harga = int.parse(value);},
+            validator: (i) {
+              if (i == null) {
+                return 'harga harus diisi';
+              } if (i == '') {
+                return 'Harga harus berupa angka';
+              } else {
+                return null;
+              }
+            },
+          ),
+          Row(children: <Widget>[
+            RaisedButton(
+              child: Text('Cancel'),
+              onPressed: () {
+                Navigator.pop(context);
+              },
+            ),
+            RaisedButton(
+              child: Text('Save'),
+              onPressed: () {
+                var form = _formKey.currentState;
+                if (form.validate()) {
+                  form.save();
+                  updateDoc(_tanggal, _nama, _deskripsi, _harga);
+                  Navigator.pop(context);
+                }
+              },
+            )
+          ],)
         ]),
       ),
       
     );
+  }
+  void updateDoc(String doc, String nama, String desk, int harga) async {
+    await Firestore.instance.collection('daftarBelanja')
+        .document(doc)
+        .collection(doc)
+        .document(nama)
+        .setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
   }
 }
