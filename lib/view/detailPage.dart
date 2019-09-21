@@ -66,7 +66,9 @@ class _DetailPageState extends State<DetailPage> {
                 ),
                 IconButton(
                   icon: Icon(Icons.delete_forever, color: Colors.red,),
-                  onPressed: () {},
+                  onPressed: () {
+                    _delete(item.reference.documentID);
+                  },
                 )
               ],
             ),
@@ -74,5 +76,27 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
     );
+  }
+
+  _delete(String id) async {
+    var db = Firestore.instance.collection('daftarBelanja');
+    int totalBelanja;
+    var pengeluaran = await db.document(widget.tanggal)
+        .collection(widget.tanggal)
+        .document(id).get();
+    var dataAwal = await db.document(widget.tanggal).get();
+    totalBelanja = pengeluaran.data['Harga'];
+    await db.document(widget.tanggal).collection(widget.tanggal)
+    .document(id).delete();
+    int valueAwal = dataAwal.data['Total Pengeluaran'];
+    var dataS = await db.document(widget.tanggal)
+        .collection(widget.tanggal)
+        .getDocuments();
+    var nilai = dataS.documents.length;
+    await db.document(widget.tanggal).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal - totalBelanja});
+    if(nilai == null || nilai == 0){
+      await db.document(widget.tanggal).delete();
+      Navigator.pop(context);
+    }
   }
 }
