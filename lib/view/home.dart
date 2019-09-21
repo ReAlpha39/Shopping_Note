@@ -65,7 +65,7 @@ class _HomeState extends State<Home> {
         trailing: IconButton(
           icon: Icon(Icons.navigate_next),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage()));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(tanggal: record.reference.documentID,)));
           },
         ),
       ),

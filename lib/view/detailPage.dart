@@ -2,6 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class DetailPage extends StatefulWidget {
+  final tanggal;
+
+  const DetailPage({this.tanggal});
   @override
   _DetailPageState createState() => _DetailPageState();
 }
@@ -19,7 +22,7 @@ class _DetailPageState extends State<DetailPage> {
 
     Widget _bodyHome(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('daftarBelanja').document('21-09-2019').collection('21-09-2019').snapshots(),
+      stream: Firestore.instance.collection('daftarBelanja').document(widget.tanggal).collection(widget.tanggal).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents);
