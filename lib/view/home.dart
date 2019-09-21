@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:shoping_note/models/data.dart';
 import 'package:shoping_note/view/detailPage.dart';
 import 'package:shoping_note/view/formPage.dart';
+import 'package:intl/intl.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -50,6 +51,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final record = Record.fromSnapshot(data);
+    final formatCurrency = NumberFormat('##,###,###');
     return Padding(
       key: ValueKey(record.reference.documentID),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -60,7 +62,7 @@ class _HomeState extends State<Home> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 20),),
-            Text('Jumlah pengeluaran: ' + record.pengeluaran.toString(), style: TextStyle(fontSize: 20),)
+            Text('Jumlah pengeluaran: Rp. ' + '${formatCurrency.format(record.pengeluaran)}', style: TextStyle(fontSize: 20),)
           ],
         ),
         trailing: IconButton(
