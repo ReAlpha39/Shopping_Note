@@ -62,6 +62,7 @@ class _FormPageState extends State<FormPage> {
               onSaved: (value) {_nama = value;},
             ),
             TextFormField(
+              maxLines: 3,
               controller: deskC,
               decoration: InputDecoration(
                 labelText: 'Deskripsi'
