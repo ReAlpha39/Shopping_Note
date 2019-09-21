@@ -4,6 +4,13 @@ import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
 
 class FormPage extends StatefulWidget {
+
+  final String title;
+  final String tanggal;
+  final String docID;
+
+  const FormPage({this.title, this.tanggal, this.docID});
+
   @override
   _FormPageState createState() => _FormPageState();
 }
