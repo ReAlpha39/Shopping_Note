@@ -35,7 +35,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 14),
       children: snapshot.map((data) => _buildListItem(context, data)).toList(),
     );
   }
@@ -45,14 +45,14 @@ class _DetailPageState extends State<DetailPage> {
     final formatCurrency = NumberFormat('###,###');
     return Padding(
       key: ValueKey(item.reference.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: ExpansionTile(
         leading: Icon(Icons.shopping_cart),                         
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text(item.nama, style: TextStyle(fontSize: 20),),
-            Text('Rp. ' + '${formatCurrency.format(item.harga)}', style: TextStyle(fontSize: 20),)
+            Text(item.nama, style: TextStyle(fontSize: 16),),
+            Text('Rp. ' + '${formatCurrency.format(item.harga)}', style: TextStyle(fontSize: 16),)
           ],
         ),
         children: <Widget>[
@@ -62,7 +62,7 @@ class _DetailPageState extends State<DetailPage> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 IconButton(
-                  icon: Icon(Icons.edit, color: Colors.blue,),
+                  icon: Icon(Icons.edit, color: Colors.green,),
                   onPressed: (){
                     editData(item.reference.documentID);
                   },

@@ -44,7 +44,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
     return ListView(
-      padding: const EdgeInsets.only(top: 20),
+      padding: const EdgeInsets.only(top: 14),
       children: snapshot.map((data) => _buildListItem(context, data)).toList(),
     );
   }
@@ -54,15 +54,15 @@ class _HomeState extends State<Home> {
     final formatCurrency = NumberFormat('###,###');
     return Padding(
       key: ValueKey(record.reference.documentID),
-      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: ListTile(
         leading: Icon(Icons.monetization_on, size: 30,),
-        title: Text(record.reference.documentID),
+        title: Text(record.reference.documentID, style: TextStyle(fontSize: 16),),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 20),),
-            Text('Jumlah pengeluaran: Rp. ' + '${formatCurrency.format(record.pengeluaran)}', style: TextStyle(fontSize: 20),)
+            Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 15),),
+            Text('Jumlah pengeluaran: Rp. ' + '${formatCurrency.format(record.pengeluaran)}', style: TextStyle(fontSize: 15),)
           ],
         ),
         trailing: IconButton(
@@ -72,7 +72,6 @@ class _HomeState extends State<Home> {
           },
         ),
       ),
-      
     );
   }
 }
