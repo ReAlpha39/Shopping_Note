@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shoping_note/models/data.dart';
 import 'package:shoping_note/view/detailPage.dart';
 import 'package:shoping_note/view/formPage.dart';
 
@@ -72,22 +73,4 @@ class _HomeState extends State<Home> {
       
     );
   }
-}
-
-class Record {
-  final int jumlahDoc;
-  final int pengeluaran;
-  final DocumentReference reference;
-
-  Record.fromMap(Map<String, dynamic> map, {this.reference})
-      : assert(map['jumlahDoc'] != null),
-        assert(map['Total Pengeluaran'] != null),
-        jumlahDoc = map['jumlahDoc'],
-        pengeluaran = map['Total Pengeluaran'];
-
-  Record.fromSnapshot(DocumentSnapshot snapshot)
-      : this.fromMap(snapshot.data, reference: snapshot.reference);
-
-  @override
-  String toString() => "Record<$jumlahDoc:$pengeluaran>";
 }
