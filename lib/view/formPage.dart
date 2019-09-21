@@ -10,7 +10,6 @@ class FormPage extends StatefulWidget {
   final String docID;
 
   const FormPage({this.title, this.tanggal, this.docID});
-
   @override
   _FormPageState createState() => _FormPageState();
 }
@@ -20,12 +19,14 @@ class _FormPageState extends State<FormPage> {
   TextEditingController namaC = TextEditingController();
   TextEditingController deskC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
+  TextEditingController tanggalC = TextEditingController();
   final dateFormat = DateFormat('dd-MM-yyyy');
   DateTime date;
   String _tanggal;
   String _nama;
   String _deskripsi;
   int _harga;
+  int vAwal;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,6 +40,7 @@ class _FormPageState extends State<FormPage> {
             key: _formKey,
             child: Column(children: <Widget>[
               DateTimeField(
+                controller: tanggalC,
                 decoration: InputDecoration(
                   labelText: 'Tanggal'
                 ),
@@ -145,13 +147,39 @@ class _FormPageState extends State<FormPage> {
     totalBelanja = pengeluaran.data['Harga'];
     var dataAwal = await Firestore.instance.collection('daftarBelanja')
         .document(doc).get();
-    if(dataAwal.data == null){
-      await Firestore.instance.collection('daftarBelanja')
-        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': totalBelanja});
+    if(widget.docID == null){
+      if(dataAwal.data == null){
+        await Firestore.instance.collection('daftarBelanja')
+          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': totalBelanja});
+      }else{
+        int valueAwal = dataAwal.data['Total Pengeluaran'];
+        await Firestore.instance.collection('daftarBelanja')
+          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal + totalBelanja});
+      }
     }else{
+      var db = Firestore.instance.collection('daftarBelanja').document(widget.tanggal);
       int valueAwal = dataAwal.data['Total Pengeluaran'];
-      await Firestore.instance.collection('daftarBelanja')
-        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal + totalBelanja});
+      await db.updateData({'Total Pengeluaran': valueAwal - vAwal + totalBelanja});
     }
+  }
+
+  void initState(){
+    if(widget.docID != null){
+      dataAwal();
+      super.initState();
+    }else{
+      tanggalC.text = dateFormat.format(DateTime.now());
+    }
+  }
+
+  void dataAwal() async {
+    var db = Firestore.instance.collection('daftarBelanja')
+      .document(widget.tanggal).collection(widget.tanggal).document(widget.docID);
+    var data = await db.get();
+    namaC.text = data.data['Nama'];
+    deskC.text = data.data['Deskripsi'];
+    hargaC.text = '${data.data['Harga']}';
+    tanggalC.text = widget.tanggal;
+    vAwal = data.data['Harga'];
   }
 }
