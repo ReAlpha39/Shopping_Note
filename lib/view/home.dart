@@ -51,7 +51,7 @@ class _HomeState extends State<Home> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final record = Record.fromSnapshot(data);
-    final formatCurrency = NumberFormat('##,###,###');
+    final formatCurrency = NumberFormat('###,###');
     return Padding(
       key: ValueKey(record.reference.documentID),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),

@@ -41,7 +41,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final item = Item.fromSnapshot(data);
-    final formatCurrency = NumberFormat('##,###,###');
+    final formatCurrency = NumberFormat('###,###');
     return Padding(
       key: ValueKey(item.reference.documentID),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
