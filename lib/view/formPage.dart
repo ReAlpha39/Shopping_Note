@@ -47,6 +47,13 @@ class _FormPageState extends State<FormPage> {
             decoration: InputDecoration(
               labelText: 'Nama'
             ),
+            validator: (i) {
+              if (i == ''){
+                return 'Nama harus diisi';
+              }else{
+                return null;
+              }
+            },
             onSaved: (value) {_nama = value;},
           ),
           TextFormField(
@@ -57,20 +64,21 @@ class _FormPageState extends State<FormPage> {
             onSaved: (value) {_deskripsi = value;},
           ),
           TextFormField(
-            controller: hargaC,
             decoration: InputDecoration(
               labelText: 'Harga'
             ),
             onSaved: (value) {_harga = int.parse(value);},
             validator: (i) {
-              if (i == null) {
+              if (i == '') {
                 return 'harga harus diisi';
-              } if (i == '') {
+              }
+              if (int.tryParse(i) == null) {
                 return 'Harga harus berupa angka';
               } else {
                 return null;
               }
             },
+            controller: hargaC,
           ),
           Row(children: <Widget>[
             RaisedButton(
