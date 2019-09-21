@@ -13,7 +13,36 @@ class _DetailPageState extends State<DetailPage> {
       appBar: AppBar(
         title: Text('Item Belanja'),
       ),
-      body: Container(),
+      body: _bodyHome(context),
+    );
+  }
+
+    Widget _bodyHome(BuildContext context) {
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('daftarBelanja').document('21-09-2019').collection('21-09-2019').snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) return LinearProgressIndicator();
+        return _buildList(context, snapshot.data.documents);
+      },
+    );
+  }
+
+  Widget _buildList(BuildContext context, List<DocumentSnapshot> snapshot) {
+    return ListView(
+      padding: const EdgeInsets.only(top: 20),
+      children: snapshot.map((data) => _buildListItem(context, data)).toList(),
+    );
+  }
+
+  Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
+    final item = Item.fromSnapshot(data);
+    return Padding(
+      key: ValueKey(item.reference.documentID),
+      padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+      child: ListTile(
+        leading: Icon(Icons.monetization_on, size: 30,),
+        title: Text(item.reference.documentID),
+      ),
     );
   }
 }
