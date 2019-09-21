@@ -70,7 +70,7 @@ class _FormPageState extends State<FormPage> {
             ),
             TextFormField(
               decoration: InputDecoration(
-                labelText: 'Harga'
+                labelText: 'Total Belanja'
               ),
               onSaved: (value) {_harga = int.parse(value);},
               validator: (i) {
@@ -85,25 +85,30 @@ class _FormPageState extends State<FormPage> {
               },
               controller: hargaC,
             ),
-            Row(children: <Widget>[
-              RaisedButton(
-                child: Text('Cancel'),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-              ),
-              RaisedButton(
-                child: Text('Save'),
-                onPressed: () {
-                  var form = _formKey.currentState;
-                  if (form.validate()) {
-                    form.save();
-                    updateDoc(_tanggal, _nama, _deskripsi, _harga);
+            Padding(
+              padding: const EdgeInsets.only(top: 10),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                children: <Widget>[
+                RaisedButton(
+                  child: Text('Cancel'),
+                  onPressed: () {
                     Navigator.pop(context);
-                  }
-                },
-              )
-            ],)
+                  },
+                ),
+                RaisedButton(
+                  child: Text('Save'),
+                  onPressed: () {
+                    var form = _formKey.currentState;
+                    if (form.validate()) {
+                      form.save();
+                      updateDoc(_tanggal, _nama, _deskripsi, _harga);
+                      Navigator.pop(context);
+                    }
+                  },
+                )
+              ],),
+            )
           ]),
         ),
       ),
