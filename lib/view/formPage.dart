@@ -25,81 +25,87 @@ class _FormPageState extends State<FormPage> {
       appBar: AppBar(
         title: Text('Tambah Catatan'),
       ),
-      body: Form(
-        key: _formKey,
-        child: Column(children: <Widget>[
-          DateTimeField(
-            readOnly: true,
-            format: dateFormat,
-            initialValue: DateTime.now(),
-            onShowPicker: (context, currentValue) {
-              return showDatePicker(
-                context: context,
-                firstDate: DateTime(1900),
-                initialDate: currentValue ?? DateTime.now(),
-                lastDate: DateTime(2100)
-              );
-            },
-            onSaved: (value) {_tanggal = dateFormat.format(value);},
-          ),
-          TextFormField(
-            controller: namaC,
-            decoration: InputDecoration(
-              labelText: 'Nama'
-            ),
-            validator: (i) {
-              if (i == ''){
-                return 'Nama harus diisi';
-              }else{
-                return null;
-              }
-            },
-            onSaved: (value) {_nama = value;},
-          ),
-          TextFormField(
-            controller: deskC,
-            decoration: InputDecoration(
-              labelText: 'Deskripsi'
-            ),
-            onSaved: (value) {_deskripsi = value;},
-          ),
-          TextFormField(
-            decoration: InputDecoration(
-              labelText: 'Harga'
-            ),
-            onSaved: (value) {_harga = int.parse(value);},
-            validator: (i) {
-              if (i == '') {
-                return 'harga harus diisi';
-              }
-              if (int.tryParse(i) == null) {
-                return 'Harga harus berupa angka';
-              } else {
-                return null;
-              }
-            },
-            controller: hargaC,
-          ),
-          Row(children: <Widget>[
-            RaisedButton(
-              child: Text('Cancel'),
-              onPressed: () {
-                Navigator.pop(context);
+      body: Padding(
+        padding: const EdgeInsets.all(10),
+        child: Form(
+          key: _formKey,
+          child: Column(children: <Widget>[
+            DateTimeField(
+              decoration: InputDecoration(
+                labelText: 'Tanggal'
+              ),
+              readOnly: true,
+              format: dateFormat,
+              initialValue: DateTime.now(),
+              onShowPicker: (context, currentValue) {
+                return showDatePicker(
+                  context: context,
+                  firstDate: DateTime(1900),
+                  initialDate: currentValue ?? DateTime.now(),
+                  lastDate: DateTime(2100)
+                );
               },
+              onSaved: (value) {_tanggal = dateFormat.format(value);},
             ),
-            RaisedButton(
-              child: Text('Save'),
-              onPressed: () {
-                var form = _formKey.currentState;
-                if (form.validate()) {
-                  form.save();
-                  updateDoc(_tanggal, _nama, _deskripsi, _harga);
-                  Navigator.pop(context);
+            TextFormField(
+              controller: namaC,
+              decoration: InputDecoration(
+                labelText: 'Nama'
+              ),
+              validator: (i) {
+                if (i == ''){
+                  return 'Nama harus diisi';
+                }else{
+                  return null;
                 }
               },
-            )
-          ],)
-        ]),
+              onSaved: (value) {_nama = value;},
+            ),
+            TextFormField(
+              controller: deskC,
+              decoration: InputDecoration(
+                labelText: 'Deskripsi'
+              ),
+              onSaved: (value) {_deskripsi = value;},
+            ),
+            TextFormField(
+              decoration: InputDecoration(
+                labelText: 'Harga'
+              ),
+              onSaved: (value) {_harga = int.parse(value);},
+              validator: (i) {
+                if (i == '') {
+                  return 'harga harus diisi';
+                }
+                if (int.tryParse(i) == null) {
+                  return 'Harga harus berupa angka';
+                } else {
+                  return null;
+                }
+              },
+              controller: hargaC,
+            ),
+            Row(children: <Widget>[
+              RaisedButton(
+                child: Text('Cancel'),
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+              ),
+              RaisedButton(
+                child: Text('Save'),
+                onPressed: () {
+                  var form = _formKey.currentState;
+                  if (form.validate()) {
+                    form.save();
+                    updateDoc(_tanggal, _nama, _deskripsi, _harga);
+                    Navigator.pop(context);
+                  }
+                },
+              )
+            ],)
+          ]),
+        ),
       ),
       
     );
