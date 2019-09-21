@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:shoping_note/models/data.dart';
 
 class FormPage extends StatefulWidget {
 
@@ -27,6 +28,7 @@ class _FormPageState extends State<FormPage> {
   String _deskripsi;
   int _harga;
   int vAwal;
+  int jumUang;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,27 +141,39 @@ class _FormPageState extends State<FormPage> {
         .collection(doc)
         .getDocuments();
     var nilai = dataS.documents.length;
-    int totalBelanja;
-    var pengeluaran = await Firestore.instance.collection('daftarBelanja')
-        .document(doc)
-        .collection(doc)
-        .document(nama).get();
-    totalBelanja = pengeluaran.data['Harga'];
+    moneyCounter(doc);
     var dataAwal = await Firestore.instance.collection('daftarBelanja')
         .document(doc).get();
     if(widget.docID == null){
       if(dataAwal.data == null){
         await Firestore.instance.collection('daftarBelanja')
-          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': totalBelanja});
+          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
       }else{
-        int valueAwal = dataAwal.data['Total Pengeluaran'];
         await Firestore.instance.collection('daftarBelanja')
-          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal + totalBelanja});
+          .document(doc).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
       }
     }else{
       var db = Firestore.instance.collection('daftarBelanja').document(widget.tanggal);
-      int valueAwal = dataAwal.data['Total Pengeluaran'];
-      await db.updateData({'Total Pengeluaran': valueAwal - vAwal + totalBelanja});
+      await db.updateData({'Total Pengeluaran': jumUang});
+    }
+  }
+
+  void moneyCounter(String doc) async {
+    var dataSnapshot = await Firestore.instance.collection('daftarBelanja')
+        .document(doc)
+        .collection(doc)
+        .getDocuments();
+    var dataL = dataSnapshot.documents;
+    dataL.map((dataF) => dataHarga(dataF)).toList();
+  }
+
+  void dataHarga(DocumentSnapshot dataDoc) {
+    final record = Item.fromSnapshot(dataDoc);
+    var data = record.harga;
+    if (jumUang == null){
+      jumUang = data;
+    }else{
+      jumUang = jumUang + data;
     }
   }
 
