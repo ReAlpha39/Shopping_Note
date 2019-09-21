@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoping_note/models/data.dart';
 import 'package:intl/intl.dart';
+import 'package:shoping_note/view/formPage.dart';
 
 class DetailPage extends StatefulWidget {
   final tanggal;
@@ -62,11 +63,15 @@ class _DetailPageState extends State<DetailPage> {
               children: <Widget>[
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.blue,),
-                  onPressed: (){},
+                  onPressed: (){
+                    editData(item.reference.documentID);
+                  },
                 ),
                 IconButton(
                   icon: Icon(Icons.delete_forever, color: Colors.red,),
-                  onPressed: () {},
+                  onPressed: () {
+                    _delete(item.reference.documentID);
+                  },
                 )
               ],
             ),
@@ -74,5 +79,36 @@ class _DetailPageState extends State<DetailPage> {
         ],
       ),
     );
+  }
+
+  _delete(String id) async {
+    var db = Firestore.instance.collection('daftarBelanja');
+    int totalBelanja;
+    var pengeluaran = await db.document(widget.tanggal)
+        .collection(widget.tanggal)
+        .document(id).get();
+    var dataAwal = await db.document(widget.tanggal).get();
+    totalBelanja = pengeluaran.data['Harga'];
+    await db.document(widget.tanggal).collection(widget.tanggal)
+    .document(id).delete();
+    int valueAwal = dataAwal.data['Total Pengeluaran'];
+    var dataS = await db.document(widget.tanggal)
+        .collection(widget.tanggal)
+        .getDocuments();
+    var nilai = dataS.documents.length;
+    await db.document(widget.tanggal).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal - totalBelanja});
+    if(nilai == null || nilai == 0){
+      await db.document(widget.tanggal).delete();
+      //Navigator.pop(context);
+    }
+  }
+  
+  editData(String id) {
+    String edit = 'Edit Catatan';
+    Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage(
+      title: edit,
+      tanggal: widget.tanggal,
+      docID: id,
+    )));
   }
 }
