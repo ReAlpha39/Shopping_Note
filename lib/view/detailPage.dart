@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoping_note/models/data.dart';
+import 'package:intl/intl.dart';
 
 class DetailPage extends StatefulWidget {
   final tanggal;
@@ -40,6 +41,7 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final item = Item.fromSnapshot(data);
+    final formatCurrency = NumberFormat('###,###');
     return Padding(
       key: ValueKey(item.reference.documentID),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
@@ -49,7 +51,7 @@ class _DetailPageState extends State<DetailPage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text(item.nama, style: TextStyle(fontSize: 20),),
-            Text('Rp. ' + item.harga.toString(), style: TextStyle(fontSize: 20),)
+            Text('Rp. ' + '${formatCurrency.format(item.harga)}', style: TextStyle(fontSize: 20),)
           ],
         ),
         children: <Widget>[
