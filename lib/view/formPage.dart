@@ -70,16 +70,17 @@ class _FormPageState extends State<FormPage> {
               onSaved: (value) {_deskripsi = value;},
             ),
             TextFormField(
+              keyboardType: TextInputType.number,
               decoration: InputDecoration(
                 labelText: 'Total Belanja'
               ),
               onSaved: (value) {_harga = int.parse(value);},
               validator: (i) {
                 if (i == '') {
-                  return 'harga harus diisi';
+                  return 'Total Belanja harus diisi';
                 }
                 if (int.tryParse(i) == null) {
-                  return 'Harga harus berupa angka';
+                  return 'Total Belanja harus berupa angka';
                 } else {
                   return null;
                 }
