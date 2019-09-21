@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shoping_note/view/detailPage.dart';
 import 'package:shoping_note/view/formPage.dart';
 
 class Home extends StatefulWidget {
@@ -63,7 +64,9 @@ class _HomeState extends State<Home> {
         ),
         trailing: IconButton(
           icon: Icon(Icons.navigate_next),
-          onPressed: () {},
+          onPressed: () {
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(tanggal: record.reference.documentID,)));
+          },
         ),
       ),
       
