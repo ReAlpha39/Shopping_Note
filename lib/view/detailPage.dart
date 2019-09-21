@@ -39,9 +39,20 @@ class _DetailPageState extends State<DetailPage> {
     return Padding(
       key: ValueKey(item.reference.documentID),
       padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
-      child: ListTile(
-        leading: Icon(Icons.monetization_on, size: 30,),
-        title: Text(item.reference.documentID),
+      child: ExpansionTile(
+        leading: Icon(Icons.shopping_cart),                         
+        title: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text(item.nama, style: TextStyle(fontSize: 20),),
+            Text('Rp. ' + item.harga.toString(), style: TextStyle(fontSize: 20),)
+          ],
+        ),
+        children: <Widget>[
+          ListTile(
+            title: Text(item.deskripsi),
+          ),
+        ],
       ),
     );
   }
