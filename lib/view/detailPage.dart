@@ -51,6 +51,19 @@ class _DetailPageState extends State<DetailPage> {
         children: <Widget>[
           ListTile(
             title: Text(item.deskripsi),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                IconButton(
+                  icon: Icon(Icons.edit, color: Colors.blue,),
+                  onPressed: (){},
+                ),
+                IconButton(
+                  icon: Icon(Icons.delete_forever, color: Colors.red,),
+                  onPressed: () {},
+                )
+              ],
+            ),
           ),
         ],
       ),
