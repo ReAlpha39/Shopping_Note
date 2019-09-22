@@ -116,7 +116,7 @@ class _FormPageState extends State<FormPage> {
                       var form = _formKey.currentState;
                       if (form.validate()) {
                         form.save();
-                        updateDoc(_tanggal, _nama, _deskripsi, _harga);
+                        saveDoc(_tanggal, _nama, _deskripsi, _harga);
                         Navigator.pop(context);
                       }
                     },
@@ -130,31 +130,38 @@ class _FormPageState extends State<FormPage> {
       
     );
   }
-  void updateDoc(String doc, String nama, String desk, int harga) async {
-    await Firestore.instance.collection('daftarBelanja')
+  void saveDoc(String doc, String nama, String desk, int harga) async {
+    var dbDoc = Firestore.instance.collection('daftarBelanja')
         .document(doc)
-        .collection(doc)
-        .document(nama)
-        .setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
-    var dataS = await Firestore.instance.collection('daftarBelanja')
-        .document(doc)
-        .collection(doc)
-        .getDocuments();
+        .collection(doc);
+    if(widget.docID == null){
+      await dbDoc.document(nama).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+    }else{
+      if(doc == widget.tanggal){
+        await dbDoc.document(widget.docID).updateData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+      }else{
+        
+        await dbDoc.document(widget.docID).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+        var dataS = await dbDoc.getDocuments();
+        var nilai = dataS.documents.length;
+        await Firestore.instance.collection('daftarBelanja')
+        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
+      }
+    }
+    var dataS = await dbDoc.getDocuments();
     var nilai = dataS.documents.length;
     moneyCounter(doc);
-    var dataAwal = await Firestore.instance.collection('daftarBelanja')
-        .document(doc).get();
-    if(widget.docID == null){
-      if(dataAwal.data == null){
-        await Firestore.instance.collection('daftarBelanja')
-          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
-      }else{
-        await Firestore.instance.collection('daftarBelanja')
-          .document(doc).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
-      }
+    updateDataDocTanggal(doc, nilai);
+  }
+
+  void updateDataDocTanggal(String doc, int nilai) async {
+    var dataAwal = await Firestore.instance.collection('daftarBelanja').document(doc).get();
+    if(dataAwal.data == null){
+      await Firestore.instance.collection('daftarBelanja')
+        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
     }else{
-      var db = Firestore.instance.collection('daftarBelanja').document(widget.tanggal);
-      await db.updateData({'Total Pengeluaran': jumUang});
+      await Firestore.instance.collection('daftarBelanja')
+        .document(doc).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
     }
   }
 
