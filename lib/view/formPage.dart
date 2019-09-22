@@ -138,10 +138,22 @@ class _FormPageState extends State<FormPage> {
       await dbDoc.document(nama).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
     }else{
       if(doc == widget.tanggal){
+        // Jika tanggal tidak diedit
         await dbDoc.document(widget.docID).updateData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
       }else{
-        
+        // Jika tanggal diedit
         await dbDoc.document(widget.docID).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+        var dbOld = Firestore.instance.collection('daftarBelanja').document(widget.tanggal)
+        .collection(widget.tanggal);
+        await dbOld.document(widget.docID).delete();
+        var dataOld = await dbOld.getDocuments();
+        var nilaiOld = dataOld.documents.length;
+        moneyCounter(widget.tanggal);
+        updateDataDocTanggal(widget.tanggal, nilaiOld);
+        if(nilaiOld == null || nilaiOld == 0){
+          //  Jika tanggal yang diedit hanya ada 1 dokumen
+          await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).delete();
+        }
         var dataS = await dbDoc.getDocuments();
         var nilai = dataS.documents.length;
         await Firestore.instance.collection('daftarBelanja')
