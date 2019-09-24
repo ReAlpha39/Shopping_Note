@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoping_note/models/data.dart';
 import 'package:intl/intl.dart';
+import 'package:shoping_note/models/item_belanja.dart';
 import 'package:shoping_note/view/formPage.dart';
 
 class DetailPage extends StatefulWidget {
@@ -25,7 +26,7 @@ class _DetailPageState extends State<DetailPage> {
 
     Widget _bodyHome(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('daftarBelanja').document(widget.tanggal).collection(widget.tanggal).snapshots(),
+      stream: Firestore.instance.collection('Daftar Belanja').document(widget.tanggal).collection(widget.tanggal).snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents);
@@ -41,10 +42,10 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final item = Item.fromSnapshot(data);
+    final item = ItemBelanja.fromMap(data.data);
     final formatCurrency = NumberFormat('###,###');
     return Padding(
-      key: ValueKey(item.reference.documentID),
+      key: ValueKey(item.nama),
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: ExpansionTile(
         leading: Icon(Icons.shopping_cart),                         
@@ -64,13 +65,13 @@ class _DetailPageState extends State<DetailPage> {
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.green,),
                   onPressed: (){
-                    editData(item.reference.documentID);
+                    editData(item.nama);
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.delete_forever, color: Colors.red,),
                   onPressed: () {
-                    _delete(item.reference.documentID);
+                    _delete(item.nama);
                   },
                 )
               ],
@@ -82,7 +83,7 @@ class _DetailPageState extends State<DetailPage> {
   }
 
   _delete(String id) async {
-    var db = Firestore.instance.collection('daftarBelanja');
+    var db = Firestore.instance.collection('Daftar Belanja');
     int totalBelanja;
     var pengeluaran = await db.document(widget.tanggal)
         .collection(widget.tanggal)
