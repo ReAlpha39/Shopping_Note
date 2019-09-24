@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoping_note/models/belanja_harian.dart';
-import 'package:shoping_note/models/data.dart';
 import 'package:shoping_note/view/detailPage.dart';
 import 'package:shoping_note/view/formPage.dart';
 import 'package:intl/intl.dart';
