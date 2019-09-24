@@ -70,7 +70,7 @@ class _HomeState extends State<Home> {
         trailing: IconButton(
           icon: Icon(Icons.navigate_next),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(tanggal: dateFormat.format(record.tanggal))));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(tanggal: data.documentID)));
           },
         ),
       ),
