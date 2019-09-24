@@ -28,7 +28,7 @@ class _FormPageState extends State<FormPage> {
   String _deskripsi;
   int _harga;
   int vAwal;
-  int jumUang;
+  int jumUang = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -145,25 +145,26 @@ class _FormPageState extends State<FormPage> {
         await dbDoc.document(widget.docID).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
         var dbOld = Firestore.instance.collection('daftarBelanja').document(widget.tanggal)
         .collection(widget.tanggal);
+        var dataPindah = await dbOld.document(widget.docID).get();
+        int nilaiPindah = dataPindah.data['Harga'];
         await dbOld.document(widget.docID).delete();
         var dataOld = await dbOld.getDocuments();
         var nilaiOld = dataOld.documents.length;
-        moneyCounter(widget.tanggal);
-        updateDataDocTanggal(widget.tanggal, nilaiOld);
         if(nilaiOld == null || nilaiOld == 0){
           //  Jika tanggal yang diedit hanya ada 1 dokumen
           await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).delete();
+        }else{
+          var oldDataTanggal = await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).get();
+          int valueAwal = oldDataTanggal.data['Total Pengeluaran'];
+          await Firestore.instance.collection('daftarBelanja').document(widget.tanggal)
+          .updateData({'jumlahDoc': nilaiOld, 'Total Pengeluaran': valueAwal - nilaiPindah});
         }
-        var dataS = await dbDoc.getDocuments();
-        var nilai = dataS.documents.length;
-        await Firestore.instance.collection('daftarBelanja')
-        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
       }
     }
     var dataS = await dbDoc.getDocuments();
-    var nilai = dataS.documents.length;
+    var jumDoc = dataS.documents.length;
     moneyCounter(doc);
-    updateDataDocTanggal(doc, nilai);
+    updateDataDocTanggal(doc, jumDoc);
   }
 
   void updateDataDocTanggal(String doc, int nilai) async {
@@ -189,7 +190,7 @@ class _FormPageState extends State<FormPage> {
   void dataHarga(DocumentSnapshot dataDoc) {
     final record = Item.fromSnapshot(dataDoc);
     var data = record.harga;
-    if (jumUang == null){
+    if (jumUang == 0){
       jumUang = data;
     }else{
       jumUang = jumUang + data;
