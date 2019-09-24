@@ -2,7 +2,9 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:datetime_picker_formfield/datetime_picker_formfield.dart';
+import 'package:shoping_note/models/belanja_harian.dart';
 import 'package:shoping_note/models/data.dart';
+import 'package:shoping_note/models/item_belanja.dart';
 
 class FormPage extends StatefulWidget {
 
@@ -21,7 +23,7 @@ class _FormPageState extends State<FormPage> {
   TextEditingController deskC = TextEditingController();
   TextEditingController hargaC = TextEditingController();
   TextEditingController tanggalC = TextEditingController();
-  final dateFormat = DateFormat('dd-MM-yyyy');
+  final dateFormat = DateFormat('yyyy-MM-dd');
   DateTime date;
   String _tanggal;
   String _nama;
@@ -116,7 +118,8 @@ class _FormPageState extends State<FormPage> {
                       var form = _formKey.currentState;
                       if (form.validate()) {
                         form.save();
-                        saveDoc(_tanggal, _nama, _deskripsi, _harga);
+                        saveData(_tanggal, _nama, _deskripsi, _harga);
+                        //saveDoc(_tanggal, _nama, _deskripsi, _harga);
                         Navigator.pop(context);
                       }
                     },
@@ -130,6 +133,72 @@ class _FormPageState extends State<FormPage> {
       
     );
   }
+
+  void saveData(String doc, String nama, String desk, int harga) async {
+
+    ItemBelanja itemBelanja = ItemBelanja(
+      nama: nama,
+      deskripsi: desk,
+      harga: harga
+    );
+    var dbItem = Firestore.instance.collection('Daftar Belanja').document(doc).collection(doc);
+    if(widget.docID ==  null){
+      //Save data
+      await dbItem.document(nama).setData(itemBelanja.toMap());
+    }else{
+      if(doc == widget.tanggal){
+        //Edit data item dengan tanggal yang sama
+        await dbItem.document(widget.docID).updateData(itemBelanja.toMap());
+      }else{
+        //Edit data item dengan tanggal yang berbeda
+        await dbItem.document(widget.docID).setData(itemBelanja.toMap());
+        var dbOld = Firestore.instance.collection('Daftar Belanja').document(widget.tanggal)
+        .collection(widget.tanggal);
+        await dbOld.document(widget.docID).delete();
+        var dataOld = await dbOld.getDocuments();
+        var jumDocOld = dataOld.documents.length;
+        if(jumDocOld == 0){
+          // jika tidak ada data dalam tanggal setelah data pindah
+          await Firestore.instance.collection('Daftar Belanja').document(widget.tanggal).delete();
+        }else{
+          //jika ada dalam tanggal setelah data dipindah
+          updateDocHarian(dbOld, widget.tanggal);
+        }
+      }
+    }
+    updateDocHarian(dbItem, doc);
+  }
+
+  updateDocHarian(CollectionReference collectionReference, String doc) async {
+    var dataItem = await collectionReference.getDocuments();
+    int jumItem = dataItem.documents.length;
+    BelanjaHarian belanjaHarian = BelanjaHarian(
+      tanggal: DateTime.parse(doc),
+      jumlahDoc: jumItem,
+      totalPengeluaran: counterPengeluaran(dataItem)
+    );
+    await Firestore.instance.collection('Daftar Belanja')
+    .document(doc).setData(belanjaHarian.toMap());
+  }
+
+
+  int counterPengeluaran(QuerySnapshot querySnapshot){
+    int jumItem = querySnapshot.documents.length;
+    int jumlahUang = 0;
+    int index = 0;
+    do {
+      var data = ItemBelanja.fromMap(querySnapshot.documents[index].data);
+      var uang = data.harga;
+      jumlahUang = jumlahUang + uang;
+      index++;
+    } while (index < jumItem);
+    return jumlahUang;
+  }
+
+
+
+
+
   void saveDoc(String doc, String nama, String desk, int harga) async {
     var dbDoc = Firestore.instance.collection('daftarBelanja')
         .document(doc)
@@ -152,7 +221,7 @@ class _FormPageState extends State<FormPage> {
         var nilaiOld = dataOld.documents.length;
         if(nilaiOld == null || nilaiOld == 0){
           //  Jika tanggal yang diedit hanya ada 1 dokumen
-          await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).delete();
+          await Firestore.instance.collection('tes').document(widget.tanggal).delete();
         }else{
           var oldDataTanggal = await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).get();
           int valueAwal = oldDataTanggal.data['Total Pengeluaran'];
@@ -207,7 +276,7 @@ class _FormPageState extends State<FormPage> {
   }
 
   void dataAwal() async {
-    var db = Firestore.instance.collection('daftarBelanja')
+    var db = Firestore.instance.collection('Daftar Belanja')
       .document(widget.tanggal).collection(widget.tanggal).document(widget.docID);
     var data = await db.get();
     namaC.text = data.data['Nama'];

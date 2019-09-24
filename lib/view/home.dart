@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:shoping_note/models/belanja_harian.dart';
 import 'package:shoping_note/models/data.dart';
 import 'package:shoping_note/view/detailPage.dart';
 import 'package:shoping_note/view/formPage.dart';
@@ -34,7 +35,7 @@ class _HomeState extends State<Home> {
 
   Widget _bodyHome(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
-      stream: Firestore.instance.collection('daftarBelanja').snapshots(),
+      stream: Firestore.instance.collection('Daftar Belanja').snapshots(),
       builder: (context, snapshot) {
         if (!snapshot.hasData) return LinearProgressIndicator();
         return _buildList(context, snapshot.data.documents);
@@ -50,25 +51,26 @@ class _HomeState extends State<Home> {
   }
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
-    final record = Record.fromSnapshot(data);
+    final record = BelanjaHarian.fromMap(data.data);
     final formatCurrency = NumberFormat('###,###');
+    final dateFormat = DateFormat('yyyy-MM-dd');
     return Padding(
-      key: ValueKey(record.reference.documentID),
+      key: ValueKey(dateFormat.format(record.tanggal)),
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
       child: ListTile(
         leading: Icon(Icons.monetization_on, size: 30,),
-        title: Text(record.reference.documentID, style: TextStyle(fontSize: 16),),
+        title: Text(dateFormat.format(record.tanggal), style: TextStyle(fontSize: 16),),
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 15),),
-            Text('Jumlah pengeluaran: Rp. ' + '${formatCurrency.format(record.pengeluaran)}', style: TextStyle(fontSize: 15),)
+            Text('Jumlah pengeluaran: Rp. ' + '${formatCurrency.format(record.totalPengeluaran)}', style: TextStyle(fontSize: 15),)
           ],
         ),
         trailing: IconButton(
           icon: Icon(Icons.navigate_next),
           onPressed: () {
-            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(tanggal: record.reference.documentID,)));
+            Navigator.push(context, MaterialPageRoute(builder: (context) => DetailPage(tanggal: dateFormat.format(record.tanggal))));
           },
         ),
       ),
