@@ -1,7 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:shoping_note/models/belanja_harian.dart';
-import 'package:shoping_note/models/data.dart';
 import 'package:shoping_note/view/detailPage.dart';
 import 'package:shoping_note/view/formPage.dart';
 import 'package:intl/intl.dart';
@@ -30,7 +29,7 @@ class _HomeState extends State<Home> {
     );
   }
   void navigateToFormPage(){
-    Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage(title: 'Tambah Catatan',)));
   }
 
   Widget _bodyHome(BuildContext context) {
@@ -63,8 +62,8 @@ class _HomeState extends State<Home> {
         subtitle: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text('Jumlah belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 15),),
-            Text('Jumlah pengeluaran: Rp. ' + '${formatCurrency.format(record.totalPengeluaran)}', style: TextStyle(fontSize: 15),)
+            Text('Jumlah Belanja: ' + record.jumlahDoc.toString(), style: TextStyle(fontSize: 15),),
+            Text('Jumlah Pengeluaran: Rp. ' + '${formatCurrency.format(record.totalPengeluaran)}', style: TextStyle(fontSize: 15),)
           ],
         ),
         trailing: IconButton(
