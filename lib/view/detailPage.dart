@@ -65,13 +65,13 @@ class _DetailPageState extends State<DetailPage> {
                 IconButton(
                   icon: Icon(Icons.edit, color: Colors.green,),
                   onPressed: (){
-                    editData(item.nama);
+                    editData(data.documentID);
                   },
                 ),
                 IconButton(
                   icon: Icon(Icons.delete_forever, color: Colors.red,),
                   onPressed: () {
-                    _delete(item.nama);
+                    _delete(data.documentID);
                   },
                 )
               ],
