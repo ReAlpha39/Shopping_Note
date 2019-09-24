@@ -28,7 +28,7 @@ class _FormPageState extends State<FormPage> {
   String _deskripsi;
   int _harga;
   int vAwal;
-  int jumUang;
+  int jumUang = 0;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -116,7 +116,7 @@ class _FormPageState extends State<FormPage> {
                       var form = _formKey.currentState;
                       if (form.validate()) {
                         form.save();
-                        updateDoc(_tanggal, _nama, _deskripsi, _harga);
+                        saveDoc(_tanggal, _nama, _deskripsi, _harga);
                         Navigator.pop(context);
                       }
                     },
@@ -130,31 +130,51 @@ class _FormPageState extends State<FormPage> {
       
     );
   }
-  void updateDoc(String doc, String nama, String desk, int harga) async {
-    await Firestore.instance.collection('daftarBelanja')
+  void saveDoc(String doc, String nama, String desk, int harga) async {
+    var dbDoc = Firestore.instance.collection('daftarBelanja')
         .document(doc)
-        .collection(doc)
-        .document(nama)
-        .setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
-    var dataS = await Firestore.instance.collection('daftarBelanja')
-        .document(doc)
-        .collection(doc)
-        .getDocuments();
-    var nilai = dataS.documents.length;
-    moneyCounter(doc);
-    var dataAwal = await Firestore.instance.collection('daftarBelanja')
-        .document(doc).get();
+        .collection(doc);
     if(widget.docID == null){
-      if(dataAwal.data == null){
-        await Firestore.instance.collection('daftarBelanja')
-          .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
-      }else{
-        await Firestore.instance.collection('daftarBelanja')
-          .document(doc).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
-      }
+      await dbDoc.document(nama).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
     }else{
-      var db = Firestore.instance.collection('daftarBelanja').document(widget.tanggal);
-      await db.updateData({'Total Pengeluaran': jumUang});
+      if(doc == widget.tanggal){
+        // Jika tanggal tidak diedit
+        await dbDoc.document(widget.docID).updateData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+      }else{
+        // Jika tanggal diedit
+        await dbDoc.document(widget.docID).setData({'Nama': nama, 'Deskripsi': desk, 'Harga': harga});
+        var dbOld = Firestore.instance.collection('daftarBelanja').document(widget.tanggal)
+        .collection(widget.tanggal);
+        var dataPindah = await dbOld.document(widget.docID).get();
+        int nilaiPindah = dataPindah.data['Harga'];
+        await dbOld.document(widget.docID).delete();
+        var dataOld = await dbOld.getDocuments();
+        var nilaiOld = dataOld.documents.length;
+        if(nilaiOld == null || nilaiOld == 0){
+          //  Jika tanggal yang diedit hanya ada 1 dokumen
+          await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).delete();
+        }else{
+          var oldDataTanggal = await Firestore.instance.collection('daftarBelanja').document(widget.tanggal).get();
+          int valueAwal = oldDataTanggal.data['Total Pengeluaran'];
+          await Firestore.instance.collection('daftarBelanja').document(widget.tanggal)
+          .updateData({'jumlahDoc': nilaiOld, 'Total Pengeluaran': valueAwal - nilaiPindah});
+        }
+      }
+    }
+    var dataS = await dbDoc.getDocuments();
+    var jumDoc = dataS.documents.length;
+    moneyCounter(doc);
+    updateDataDocTanggal(doc, jumDoc);
+  }
+
+  void updateDataDocTanggal(String doc, int nilai) async {
+    var dataAwal = await Firestore.instance.collection('daftarBelanja').document(doc).get();
+    if(dataAwal.data == null){
+      await Firestore.instance.collection('daftarBelanja')
+        .document(doc).setData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
+    }else{
+      await Firestore.instance.collection('daftarBelanja')
+        .document(doc).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': jumUang});
     }
   }
 
@@ -170,7 +190,7 @@ class _FormPageState extends State<FormPage> {
   void dataHarga(DocumentSnapshot dataDoc) {
     final record = Item.fromSnapshot(dataDoc);
     var data = record.harga;
-    if (jumUang == null){
+    if (jumUang == 0){
       jumUang = data;
     }else{
       jumUang = jumUang + data;
