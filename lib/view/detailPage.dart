@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:shoping_note/models/belanja_harian.dart';
 import 'package:shoping_note/models/item_belanja.dart';
 import 'package:shoping_note/view/formPage.dart';
 
@@ -83,24 +84,39 @@ class _DetailPageState extends State<DetailPage> {
 
   _delete(String id) async {
     var db = Firestore.instance.collection('Daftar Belanja');
-    int totalBelanja;
-    var pengeluaran = await db.document(widget.tanggal)
-        .collection(widget.tanggal)
-        .document(id).get();
-    var dataAwal = await db.document(widget.tanggal).get();
-    totalBelanja = pengeluaran.data['Harga'];
-    await db.document(widget.tanggal).collection(widget.tanggal)
-    .document(id).delete();
-    int valueAwal = dataAwal.data['Total Pengeluaran'];
-    var dataS = await db.document(widget.tanggal)
-        .collection(widget.tanggal)
-        .getDocuments();
-    var nilai = dataS.documents.length;
-    await db.document(widget.tanggal).updateData({'jumlahDoc': nilai, 'Total Pengeluaran': valueAwal - totalBelanja});
-    if(nilai == null || nilai == 0){
+    var delDoc = db.document(widget.tanggal).collection(widget.tanggal).document(id);
+    await delDoc.delete();
+    var dataDoc = await db.document(widget.tanggal).collection(widget.tanggal).getDocuments();
+    if(dataDoc.documents.isEmpty){
       await db.document(widget.tanggal).delete();
-      //Navigator.pop(context);
+    }else{
+      updateDocHarian(db.document(widget.tanggal).collection(widget.tanggal), widget.tanggal);
     }
+  }
+
+  updateDocHarian(CollectionReference collectionReference, String doc) async {
+    var dataItem = await collectionReference.getDocuments();
+    int jumItem = dataItem.documents.length;
+    BelanjaHarian belanjaHarian = BelanjaHarian(
+      tanggal: DateTime.parse(doc),
+      jumlahDoc: jumItem,
+      totalPengeluaran: counterPengeluaran(dataItem)
+    );
+    await Firestore.instance.collection('Daftar Belanja')
+    .document(doc).updateData(belanjaHarian.toMap());
+  }
+
+  int counterPengeluaran(QuerySnapshot querySnapshot){
+    int jumItem = querySnapshot.documents.length;
+    int jumlahUang = 0;
+    int index = 0;
+    do {
+      var data = ItemBelanja.fromMap(querySnapshot.documents[index].data);
+      var uang = data.harga;
+      jumlahUang = jumlahUang + uang;
+      index++;
+    } while (index < jumItem);
+    return jumlahUang;
   }
   
   editData(String id) {
