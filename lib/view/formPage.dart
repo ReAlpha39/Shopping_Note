@@ -28,7 +28,6 @@ class _FormPageState extends State<FormPage> {
   String _nama;
   String _deskripsi;
   int _harga;
-  int vAwal;
   int jumUang = 0;
   @override
   Widget build(BuildContext context) {
@@ -210,10 +209,10 @@ class _FormPageState extends State<FormPage> {
     var db = Firestore.instance.collection('Daftar Belanja')
       .document(widget.tanggal).collection(widget.tanggal).document(widget.docID);
     var data = await db.get();
-    namaC.text = data.data['Nama'];
-    deskC.text = data.data['Deskripsi'];
-    hargaC.text = '${data.data['Harga']}';
+    var dataItem = ItemBelanja.fromMap(data.data);
+    namaC.text = dataItem.nama;
+    deskC.text = dataItem.deskripsi;
+    hargaC.text = dataItem.harga.toString();
     tanggalC.text = widget.tanggal;
-    vAwal = data.data['Harga'];
   }
 }
