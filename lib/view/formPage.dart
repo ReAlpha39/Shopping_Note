@@ -169,14 +169,19 @@ class _FormPageState extends State<FormPage> {
 
   updateDocHarian(CollectionReference collectionReference, String doc) async {
     var dataItem = await collectionReference.getDocuments();
+    var docTanggal = Firestore.instance.collection('Daftar Belanja').document(doc);
+    var dataTanggal = await docTanggal.get();
     int jumItem = dataItem.documents.length;
     BelanjaHarian belanjaHarian = BelanjaHarian(
       tanggal: DateTime.parse(doc),
       jumlahDoc: jumItem,
       totalPengeluaran: counterPengeluaran(dataItem)
     );
-    await Firestore.instance.collection('Daftar Belanja')
-    .document(doc).setData(belanjaHarian.toMap());
+    if(dataTanggal.exists){
+      await docTanggal.updateData(belanjaHarian.toMap());
+    }else{
+      await docTanggal.setData(belanjaHarian.toMap());
+    }
   }
 
   int counterPengeluaran(QuerySnapshot querySnapshot){
