@@ -21,17 +21,34 @@ class _HomeState extends State<Home> {
         title: Text('Rekap Belanja'),
         backgroundColor: Colors.green,
         actions: <Widget>[
-          dataHariIni()
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: dataHariIni(),
+          )
         ],
       ),
-      body: _bodyHome(context),
+      body: Stack(children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 70),
+            child: _bodyHome(context),
+          ),
+          Positioned(
+            bottom: 0.0,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              height: 70,
+              width: MediaQuery.of(context).size.width,
+              child: dataHariIni(),
+            ),
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.shopping_cart),
         onPressed: () {
           navigateToFormPage();
         },
       ),
-      
     );
   }
   void navigateToFormPage(){
@@ -67,8 +84,8 @@ class _HomeState extends State<Home> {
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text('Hari ini', style: TextStyle(fontSize: 15),),
-        Text('Rp. ${formatCurrency.format(uangS)}', style: TextStyle(fontSize: 15),)
+        Text('Hari ini', style: TextStyle(fontSize: 13),),
+        Text('Rp. ${formatCurrency.format(uangS)}', style: TextStyle(fontSize: 16),)
       ],
     );
   }
