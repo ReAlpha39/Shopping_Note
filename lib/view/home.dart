@@ -11,25 +11,83 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
+  final formatCurrency = NumberFormat('###,###');
+  final dateFormat = DateFormat('yyyy-MM-dd');
+  var dataRef = Firestore.instance.collection('Daftar Belanja');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Rekap Belanja'),
         backgroundColor: Colors.green,
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: dataHariIni(),
+          )
+        ],
       ),
-      body: _bodyHome(context),
+      body: Stack(children: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(bottom: 70),
+            child: _bodyHome(context),
+          ),
+          Positioned(
+            bottom: 0.0,
+            child: Container(
+              padding: EdgeInsets.only(left: 20),
+              height: 70,
+              width: MediaQuery.of(context).size.width,
+              child: dataHariIni(),
+            ),
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.shopping_cart),
         onPressed: () {
           navigateToFormPage();
         },
       ),
-      
     );
   }
   void navigateToFormPage(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage(title: 'Tambah Catatan',)));
+  }
+
+  Widget dataHariIni(){
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('Daftar Belanja').snapshots(),
+      builder: (context, snapshot) {
+        if(!snapshot.hasData) return CircularProgressIndicator();
+          return pengeluaran(snapshot.data);
+      },
+    );
+  }
+
+  Widget pengeluaran(QuerySnapshot querySnapshot){
+    int jumItem = querySnapshot.documents.length;
+    int index = 0;
+    int uangS = 0;
+    var now = DateTime.now();
+    String tglSekarang = dateFormat.format(now);
+    do {
+      var dataDoc = BelanjaHarian.fromMap(querySnapshot.documents[index].data);
+      var tglS = dateFormat.format(dataDoc.tanggal);
+      if(tglSekarang == tglS){
+        uangS = dataDoc.totalPengeluaran;
+        break;
+      }
+      index++;
+    } while (index < jumItem);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Hari ini', style: TextStyle(fontSize: 13),),
+        Text('Rp. ${formatCurrency.format(uangS)}', style: TextStyle(fontSize: 16),)
+      ],
+    );
   }
 
   Widget _bodyHome(BuildContext context) {
@@ -51,8 +109,6 @@ class _HomeState extends State<Home> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final record = BelanjaHarian.fromMap(data.data);
-    final formatCurrency = NumberFormat('###,###');
-    final dateFormat = DateFormat('yyyy-MM-dd');
     return Padding(
       key: ValueKey(dateFormat.format(record.tanggal)),
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
