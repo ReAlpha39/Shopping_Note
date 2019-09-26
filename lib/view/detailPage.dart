@@ -14,13 +14,57 @@ class DetailPage extends StatefulWidget {
 }
 
 class _DetailPageState extends State<DetailPage> {
+  final formatCurrency = NumberFormat('###,###');
+  final dateFormat = DateFormat('yyyy-MM-dd');
+  var dataRef = Firestore.instance.collection('Daftar Belanja');
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Item Belanja'),
+        actions: <Widget>[
+          Padding(
+            padding: const EdgeInsets.only(right: 20),
+            child: dataHariIni(),
+          )
+        ],
       ),
       body: _bodyHome(context),
+    );
+  }
+
+  Widget dataHariIni(){
+    return StreamBuilder<QuerySnapshot>(
+      stream: Firestore.instance.collection('Daftar Belanja').snapshots(),
+      builder: (context, snapshot) {
+        if(!snapshot.hasData) return CircularProgressIndicator();
+          return pengeluaran(snapshot.data);
+      },
+    );
+  }
+
+  Widget pengeluaran(QuerySnapshot querySnapshot){
+    int jumItem = querySnapshot.documents.length;
+    int index = 0;
+    int uangS = 0;
+    var now = DateTime.now();
+    String tglSekarang = dateFormat.format(now);
+    do {
+      var dataDoc = BelanjaHarian.fromMap(querySnapshot.documents[index].data);
+      var tglS = dateFormat.format(dataDoc.tanggal);
+      if(tglSekarang == tglS){
+        uangS = dataDoc.totalPengeluaran;
+        break;
+      }
+      index++;
+    } while (index < jumItem);
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: <Widget>[
+        Text('Hari ini', style: TextStyle(fontSize: 13),),
+        Text('Rp. ${formatCurrency.format(uangS)}', style: TextStyle(fontSize: 16),)
+      ],
     );
   }
 
@@ -43,7 +87,6 @@ class _DetailPageState extends State<DetailPage> {
 
   Widget _buildListItem(BuildContext context, DocumentSnapshot data) {
     final item = ItemBelanja.fromMap(data.data);
-    final formatCurrency = NumberFormat('###,###');
     return Padding(
       key: ValueKey(item.nama),
       padding: const EdgeInsets.symmetric(horizontal: 12.0, vertical: 8.0),
