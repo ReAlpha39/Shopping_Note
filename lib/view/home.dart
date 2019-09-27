@@ -59,7 +59,7 @@ class _HomeState extends State<Home> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('Daftar Belanja').snapshots(),
       builder: (context, snapshot) {
-        if(!snapshot.hasData) return CircularProgressIndicator();
+        if(!snapshot.hasData) return displayNilai(0);
           return pengeluaran(snapshot.data);
       },
     );
@@ -80,12 +80,16 @@ class _HomeState extends State<Home> {
       }
       index++;
     } while (index < jumItem);
+    return displayNilai(uangS);
+  }
+
+  Widget displayNilai(int nilai){
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text('Hari ini', style: TextStyle(fontSize: 13),),
-        Text('Rp. ${formatCurrency.format(uangS)}', style: TextStyle(fontSize: 16),)
+        Text('Rp. ${formatCurrency.format(nilai)}', style: TextStyle(fontSize: 16),)
       ],
     );
   }
