@@ -38,7 +38,7 @@ class _HomeState extends State<Home> {
       bottomNavigationBar: BottomAppBar(
         shape: CircularNotchedRectangle(),
         child: Container(
-          height: 70,
+          height: 60,
           child: Padding(
             padding: EdgeInsets.only(left: 20),
             child: dataHariIni(),
@@ -47,7 +47,7 @@ class _HomeState extends State<Home> {
       ),
     );
   }
-  
+
   void navigateToFormPage(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage(title: 'Tambah Catatan',)));
   }
