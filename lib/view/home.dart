@@ -27,30 +27,27 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: Stack(children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 70),
-            child: _bodyHome(context),
-          ),
-          Positioned(
-            bottom: 0.0,
-            child: Container(
-              padding: EdgeInsets.only(left: 20),
-              height: 70,
-              width: MediaQuery.of(context).size.width,
-              child: dataHariIni(),
-            ),
-          )
-        ],
-      ),
+      body: _bodyHome(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.shopping_cart),
         onPressed: () {
           navigateToFormPage();
         },
       ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: Container(
+          height: 60,
+          child: Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: dataHariIni(),
+          ),
+        )
+      ),
     );
   }
+
   void navigateToFormPage(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage(title: 'Tambah Catatan',)));
   }
@@ -59,7 +56,7 @@ class _HomeState extends State<Home> {
     return StreamBuilder<QuerySnapshot>(
       stream: Firestore.instance.collection('Daftar Belanja').snapshots(),
       builder: (context, snapshot) {
-        if(!snapshot.hasData) return CircularProgressIndicator();
+        if(!snapshot.hasData) return displayNilai(0);
           return pengeluaran(snapshot.data);
       },
     );
@@ -80,12 +77,16 @@ class _HomeState extends State<Home> {
       }
       index++;
     } while (index < jumItem);
+    return displayNilai(uangS);
+  }
+
+  Widget displayNilai(int nilai){
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         Text('Hari ini', style: TextStyle(fontSize: 13),),
-        Text('Rp. ${formatCurrency.format(uangS)}', style: TextStyle(fontSize: 16),)
+        Text('Rp. ${formatCurrency.format(nilai)}', style: TextStyle(fontSize: 16),)
       ],
     );
   }
