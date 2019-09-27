@@ -27,30 +27,27 @@ class _HomeState extends State<Home> {
           )
         ],
       ),
-      body: Stack(children: <Widget>[
-          Padding(
-            padding: const EdgeInsets.only(bottom: 70),
-            child: _bodyHome(context),
-          ),
-          Positioned(
-            bottom: 0.0,
-            child: Container(
-              padding: EdgeInsets.only(left: 20),
-              height: 70,
-              width: MediaQuery.of(context).size.width,
-              child: dataHariIni(),
-            ),
-          )
-        ],
-      ),
+      body: _bodyHome(context),
+      floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       floatingActionButton: FloatingActionButton(
         child: Icon(Icons.shopping_cart),
         onPressed: () {
           navigateToFormPage();
         },
       ),
+      bottomNavigationBar: BottomAppBar(
+        shape: CircularNotchedRectangle(),
+        child: Container(
+          height: 70,
+          child: Padding(
+            padding: EdgeInsets.only(left: 20),
+            child: dataHariIni(),
+          ),
+        )
+      ),
     );
   }
+  
   void navigateToFormPage(){
     Navigator.push(context, MaterialPageRoute(builder: (context) => FormPage(title: 'Tambah Catatan',)));
   }
